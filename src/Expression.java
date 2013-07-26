@@ -17,6 +17,7 @@ public class Expression {
 	public LinkedList<String> Queue;
 	// Class Constructor: Takes expression and passes to exprTreeHelper
 	public Expression (String s) {
+		Queue = new LinkedList<String>();
 		exprTreeHelper(s);
 	}
 	public String toString ()
@@ -44,6 +45,7 @@ public class Expression {
 			// in parentheses, and construct the two subtrees.
 			int nesting = 0;
 			int opPos = 0;
+			int opPosLen = 0;
 			//Iterates over expression
 			for (int k=1; k<expr.length()-1; k++) {
 				if(Character.toString(expr.charAt(k)).equals("("))
@@ -54,23 +56,27 @@ public class Expression {
 				{
 					nesting--;
 				}
-				if(Character.toString(expr.charAt(k)).equals("+") || Character.toString(expr.charAt(k)).equals("*"))
+				if(Character.toString(expr.charAt(k)).equals("=") && Character.toString(expr.charAt(k+1)).equals(">"))
 				{
 					if(nesting==0)
 					{
 						opPos = k;
+						opPosLen++;
+						k++;
 					}
 				}
 			}
 			//Finds Operations and Left and Right expressions
 			String opnd1 = expr.substring (1, opPos);
-			String opnd2 = expr.substring (opPos+1, expr.length()-1);
-			String op = expr.substring (opPos, opPos+1);
+			String opnd2 = expr.substring (opPos+opPosLen+1, expr.length()-1);
+			String op = expr.substring (opPos, opPos+opPosLen+1);
 			//Enques the Operation and left and right expressions.
+			
+			System.out.println(op);
+			
 			Queue.add(op);
 			exprTreeHelper(opnd1);
 			exprTreeHelper(opnd2);
 		}
 	}
 }
-

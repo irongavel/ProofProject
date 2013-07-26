@@ -2,7 +2,7 @@ import java.util.*;
 
 public class LineNumber {
 
-	
+
 	// CLASS VARIABLES//
 
 	/*
@@ -10,7 +10,7 @@ public class LineNumber {
 	 */
 	private ArrayList<Integer> currentPosition = new ArrayList<Integer>();
 
-	
+
 	// METHODS //
 
 	/*
@@ -51,21 +51,22 @@ public class LineNumber {
 		this.step();
 	}
 
-	
+
 	/*
 	* Returns the current line number as a String object
 	*/
 	public String current() {
-		return currentPosition.toString();
+		return currentPosition.toString().substring(1, currentPosition.size()+1);
 	}
 
-	
+
 	/*
 	* Prints out a human-readable statement
 	*/
 	public String toString() {
 		String rtn = "";
-		for (int i : currentPosition)
+		//for (int i : currentPosition)
+		for (int i = 0; i < currentPosition.size(); i++)
 		{
 			if (i != 0)
 			{
@@ -75,9 +76,9 @@ public class LineNumber {
 		}
 		return rtn;
 	}
-	
+
 	// HELPER METHODS //
-	
+
 	/*
 	* Returns size of a line number
 	* Size of a line number = quantity of integers
@@ -90,4 +91,3 @@ public class LineNumber {
 
 // Ends LineNumber class
  }
-

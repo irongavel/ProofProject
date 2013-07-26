@@ -34,15 +34,16 @@ public class Proof {
 		//adds tree object to proofs theorem set with name lineNumber and expression y
 		
 		//check x for Line Errors
-
+		String[] statement;
 		try{
-			LineChecker(x);
+			statement = StringSplitter(x);
+			LineChecker(statement);
 		}catch (IllegalLineException e){
 			throw e;
 		}
 
 		//split string into argument and expression
-		String[] statement = StringSplitter(x);
+		
 		//make Expression
 		
 		reasonDelagation(statement);
@@ -71,16 +72,54 @@ public class Proof {
 		return false;
 		//return ((myTheoremSet.get("1").equals(myTheoremSet.get(myLineNumber.toString()))&&(myLineNumber.toString()!="1")));
 	}
-
-	public boolean LineChecker(String x) throws IllegalLineException {
-
-		//checks for Line errors, returns true if isOK, returns false if error
-		return true;
-	}
-
-	public boolean InferenceChecker(LinkedList<String> inferenceQueue) throws  IllegalInferenceException
+	
+	//change name
+	public boolean mtChecker(ArrayList<LinkedList<String>> Queues)
 	{
-		return true;
+		//Iterate Over the Tree Expressions from Molles Tollens
+		for(LinkedList curQueue : Queues)
+		{
+			//curExpr is a expression to be evaluated
+			if(curQueue.size() <= 2)
+			{
+				//Gets Next Symbol
+				String curSymbol = (String) curQueue.pop();
+				
+				//Checks Implies
+				if(curSymbol.equals("=>"))
+				{
+					boolean bol1 = mtHelperChecker(curQueue,Queues);
+					boolean bol2 = mtHelperChecker(curQueue,Queues);
+					return implies(bol1,bol2);
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean mtHelperChecker(LinkedList<String> curQueue,ArrayList<LinkedList<String>> Queues)
+	{
+		String curSymbol = (String) curQueue.pop();
+
+		if(curSymbol.equals("=>"))
+		{
+			boolean bol1 = mtHelperChecker(curQueue,Queues);
+			boolean bol2 = mtHelperChecker(curQueue,Queues);
+			return implies(bol1,bol2);
+		}
+		
+		for(LinkedList<String> Q : Queues)
+		{
+			if(Q.size() == 1)
+			{
+				if(curSymbol.equals(Q.getFirst()))
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public static String[] StringSplitter(String x) throws IllegalLineException{
@@ -101,26 +140,38 @@ public class Proof {
 		}
 		if (command.equals("show"))
 		{
-			myLineNumber.layerDown();
+			myLineNumber.layerMinus();
 		}
 		if (command.equals("assume"))
 		{
-			myTheoremSet.put(myLineNumber.current(), args[1]);
+			myTheoremSet.put(myLineNumber.current(), new Expression(args[1]));
 			myLineNumber.step();
 		}
 		if (command.equals("mp"))
 		{
-			mpChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
+			//mpChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
 			myLineNumber.step();
 		}
 		if (command.equals("mt"))
 		{
-			mtChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
-			myLineNumber.step();
+			Expression newThm = new Expression(args[3]);
+			ArrayList<LinkedList<String>> passArrayList = new ArrayList<LinkedList<String>>();
+			passArrayList.add((LinkedList<String>) myTheoremSet.get(args[1]).clone());
+			passArrayList.add((LinkedList<String>) myTheoremSet.get(args[2]).clone());
+			passArrayList.add((LinkedList<String>) newThm.Queue.clone());
+			if(mtChecker(passArrayList))
+			{
+				myTheoremSet.put(myLineNumber.current(), newThm);
+				myLineNumber.step();
+			}
+			else
+			{
+				System.out.println("Invalid Inference");
+			}
 		}
 		if (command.equals("co"))
 		{
-			coChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
+			//coChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
 			myLineNumber.layerUp();
 		}
 		if (command.equals("ic"))
@@ -134,7 +185,7 @@ public class Proof {
 		
 		
 	}
-	
+
 	public static boolean LineChecker(String[] statement) throws IllegalLineException {
 		//check for correct space placement
 		//checks for Line errors, returns true if isOK, returns false if error
@@ -181,11 +232,73 @@ public class Proof {
 			throw new IllegalLineException("***Invalid Reason:" + x);
 		}
 	}
-
-	public static boolean ExpressionChecker(String x) throws IllegalLineException{
-		return false;
+	public static void ExpressionChecker(String x) throws IllegalLineException*/{
 		//checks Expression for valid Parentheses, typos
+		//checks for nesting, operators within nesting, and syntax
+		int a=0;
+		int b=0;
+		char test=0;
+		int canHold=0;
+		int needRight=0;
+		boolean[][] dictionary=new boolean[][]{{false,false,true,false,true,false,false},
+							{true,true,false,true,false,false,true},
+							{false,false,true,false,true,false},
+							{true,true,false,true,false,false,true},
+							{true,true,false,true,true,false,true},
+							{false,false,true,false,true,false,false},
+							{false,false,false,false,false,true,false}};
+									
+		for(int i=0;i<x.length();i++){
+			test=x.charAt(i);
+			a=indexer(test);
+			if (a==100){
+				throw new IllegalLineException("***Invalid Expression: "+x);
+			}
+			if (!dictionary[a][b]){
+				throw new IllegalLineException("***Invalid Expression: "+x);
+			}
+			if (test==')'){
+				needRight--;
+			}else if(test=='('){
+				needRight++;
+				canHold++;
+			}else if(test=='='){
+				canHold--;
+			}else if(test=='|'||test=='&'){
+				canHold--;
+			}else if(test=='~'){
+			}else if(!Character.isLetter(test)&&test!='>'){
+				throw new IllegalLineException("***Invalid Expression: "+x);
+			}
+			if (canHold<0||needRight<0){
+				throw new IllegalLineException("***Invalid Expression: "+x);
+			}
+			b=a;
+		}
+		if (canHold!=0||needRight!=0){
+			throw new IllegalLineException("***Invalid Expression: "+x);
+		}
 	}
+	public static int indexer(char x)throws IllegalLineException*/{
+		//takes in a char and returns int to be used for indexing with Expression Checker's dictionary
+		//throws IllegalLineException when the char is not of expected type
+		//the final return of 100 is never reached.
+		switch(x){
+			case '|':case'&': return 0;
+			case '(': return 1;
+			case ')': return 2;
+			case '~': return 3;
+			case '=': return 5;
+			case '>': return 6;
+			default: if(!Character.isLetter(x)){
+						throw new IllegalLineException("***Invalid Expression: "+x);
+					}else{
+						return 4;
+					}
+		}
+		return 100;
+	}
+
 
 	public static void LineNumberChecker(String x)throws IllegalLineException{
 		//checks that x is just ints and .
@@ -203,47 +316,7 @@ public class Proof {
 		}
 	}
 	
-	public void reasonDelagation(String[] args)
-	{
-		String command = args[0];
-		
-		if (command.equals("theorem"))
-		{
-			
-		}
-		if (command.equals("show"))
-		{
-			myLineNumber.layerDown();
-		}
-		if (command.equals("assume"))
-		{
-			myTheoremSet.put(myLineNumber.current(), args[1]);
-			myLineNumber.step();
-		}
-		if (command.equals("mp"))
-		{
-			mpChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
-			myLineNumber.step();
-		}
-		if (command.equals("mt"))
-		{
-			mtChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
-			myLineNumber.step();
-		}
-		if (command.equals("co"))
-		{
-			coChecker(myTheoremSet.get(args[1]),myTheoremSet.get(args[2]),args[3]);
-			myLineNumber.layerUp();
-		}
-		if (command.equals("ic"))
-		{
-			myLineNumber.layerUp();
-		}
-		if (command.equals("repeat"))
-		{
-			
-		}
-	}
+	
 
 	public boolean implies(boolean op1, boolean op2)
 	{
