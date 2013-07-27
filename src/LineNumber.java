@@ -88,6 +88,10 @@ public class LineNumber {
 	public int lineNumberSize() {
 		return currentPosition.size();
 	}
-
+	//checks if the linenumber ends with .1 (is ok to make an assume)
+	public boolean readyAssume(){
+	    Integer temp = currentPosition.get(currentPosition.size()-1);
+		return temp==1;
+	}
 // Ends LineNumber class
  }
