@@ -53,7 +53,7 @@ public class LineNumber {
 
 
 	/*
-	* Returns the current line number as a String object
+	* not sure what this is for, don't use this please
 	*/
 	public String current() {
 		return currentPosition.toString().substring(1, currentPosition.size()+1);
@@ -61,7 +61,7 @@ public class LineNumber {
 
 
 	/*
-	* Prints out a human-readable statement
+	* Returns the current line number as a String object
 	*/
 	public String toString() {
 		String rtn = "";

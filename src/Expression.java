@@ -11,6 +11,9 @@ import java.util.LinkedList;
  *
  */
 
+//PROBLEM: Expressions can be stacked different ways, depending on how the 
+// 			parenthasis are arranged..
+
 public class Expression {
 
 	//Root of Tree (First Operator Usually)
@@ -35,8 +38,22 @@ public class Expression {
 	}
 	//Parser of Expression into Tree
 	private void exprTreeHelper (String expr) {
-		if (expr.charAt (0) != '(') {
+		//System.out.print(expr);
+		if (expr.charAt (0) != '(' && expr.charAt (0) != '~') {
 			Queue.add(Character.toString(expr.charAt(0)));
+		}
+		else if (expr.charAt (0) == '~')
+		{
+			if(expr.charAt (1) == '(' || expr.charAt (1) == '~')
+			{
+				Queue.add(Character.toString(expr.charAt(0)));
+				exprTreeHelper(expr.substring(1));
+			}
+			else
+			{
+				Queue.add(Character.toString(expr.charAt(0)));
+				Queue.add(Character.toString(expr.charAt(1)));
+			}
 		}
 		else {
 			// expr is a parenthesized expression.
@@ -71,9 +88,9 @@ public class Expression {
 			String opnd2 = expr.substring (opPos+opPosLen+1, expr.length()-1);
 			String op = expr.substring (opPos, opPos+opPosLen+1);
 			//Enques the Operation and left and right expressions.
-			
+
 			System.out.println(op);
-			
+
 			Queue.add(op);
 			exprTreeHelper(opnd1);
 			exprTreeHelper(opnd2);
