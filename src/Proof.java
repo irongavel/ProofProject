@@ -244,15 +244,24 @@ public class Proof {
 		}
 		if (command.equals("assume"))
 		{
+				if (!myLineNumber.readyAssume()){
+					throw new IllegalInferenceException("Must Use assume After a show");
+				}
+			Queue temp = showTable.get(myLineNumber.currentSuper());
+			if (temp==null||temp.toString()!=args[1]){
+				throw new IllegalInferenceException("Show was not made at LineNumber: "+temp);
+			}else if (temp.toString()!=args[1]){
+				throw new IllegalInferenceException("Can Only Assume Left Side of =>: "+ args[1]);
+			}
 			/*
 			To do: 
-				-if current line number = 2 then continue
+				-if current line number = 2 then continue (Done)
 				-else check that the last element in the line number array = 1
 				  Deprecated: (current line number, without last 2 chars = hashtable (key) points to the show expression currently being proved)
 				-else throw hands up theyre playing my song
 				-add to theoremset (done)
 			*/
-			myTheoremSet.put(myLineNumber.current(), new Expression(args[1]));
+			myTheoremSet.put(myLineNumber.toString(), new Expression(args[1]));
 			myLineNumber.step();
 		}
 		if (command.equals("mp"))
@@ -331,6 +340,34 @@ public class Proof {
 	 * 				any of the following lines may be referenced: 1, 2, 3.1, 3.2.1, 3.2.2, or 3.2.3.
 	 * 
 	 * */
+	 
+	 public LinkedList<String> findAssumption(LinkedList<String> Queue)
+	{
+		/* Takes in Queue expressing and Expression
+		 * returns a Queue of the Left Operand of the Expressiong
+		 *  Note: Uses, .pop, make sure to 
+		 */
+		LinkedList<String> rtnQueue = new LinkedList<String>();
+		int count = 1;
+
+		while(count != 0)
+		{
+			int i=0;
+			String currentStr = Queue.get(i);
+			if(currentStr.equals("=>"))
+			{
+				count = count + 2;
+			}
+			else
+			{
+				count--;
+			}
+			rtnQueue.add(currentStr);
+			i++;
+		}
+		return rtnQueue;
+	}
+	
 	public boolean checkLineScope(String[] statement)
 	{
 		
