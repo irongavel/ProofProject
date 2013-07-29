@@ -6,7 +6,7 @@ public class LineNumber {
 	// CLASS VARIABLES//
 
 	/*
-	 * Main ArrayList that holds the line number integers (“layers”) in different elements
+	 * Main ArrayList that holds the line number integers (layers) in different elements
 	 */
 	private ArrayList<Integer> currentPosition = new ArrayList<Integer>();
 
@@ -53,7 +53,7 @@ public class LineNumber {
 
 
 	/*
-	* not sure what this is for, don't use this please
+	* returns Line Number of current Show
 	*/
 	public String currentSuper()
 	{
