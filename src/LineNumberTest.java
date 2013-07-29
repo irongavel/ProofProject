@@ -48,3 +48,4 @@ public class LineNumberTest {
 		assertFalse(test.readyAssume());	
 	}
 }
+
