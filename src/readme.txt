@@ -1,17 +1,20 @@
+
 General Explanation:
 
 We decided to represent expressions as queues, or linkedLists<String> in the order of operations.
 This can be more thouroughly illuminated in the test class for expression. Also, our expression class does not throw
-any of it's own errors, instead, these errors are thrown in the linechecker method. Please do not penizlize us for 
+any of it's own errors, instead, these errors are thrown in the linechecker method. Please do not penalize us for 
 this design decision. Proofs are stored in a HashTable, and the scope is checked for every command possible.
 
 
 
-Test Explanations:
+TheoremSetTest:
+
+Tests methods for putting and getting of expressions into and outof the TheoremSet
 
 ProofTest:
 
-
+These tests are not so much tests as they are markers for tested documents both given to us and created by us.
 
 ExpressionTest:
 
@@ -21,6 +24,7 @@ taking into account the various operations possible.
 
 LineNumberTest:
 
+Tests the methods in LineNumber to see if they operate as expected.
 
 Description of individual contributions:
 
@@ -49,5 +53,18 @@ Niko Gomez [cs61bl-or]-
   	coded on findConsequent
 
 Tohma Judge [cs61bl-pg]-
+  Programmed Syntax Checking Stuff
+  	Coded on repeat
+  	Coded on show
+  	Coded on print
+  	Coded on assume
+  	Coded String Splitter
+  	Coded LineChecker
+  	Coded LineScopeChecker
+  	Coded ExpressionChecker
+  	Coded on ExpressionTest
+  	Coded TheoremSetTest
+  	Coded LineNumberTest
+  	
 
 Ryan Davis [cs61bl-ot]-
