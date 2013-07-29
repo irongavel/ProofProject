@@ -51,6 +51,12 @@ public class ProofTest{
 		//Test mp, ic, nesting
 		String [] myTxts6 = {"thmSetOne.txt","proof06_Revised.txt"};
 		myChecker = new ProofChecker(myTxts6);
+		//tests Error Catching
+		String [] myTxts7 ={"thmSetTwo.txt","proofExample.txt"};
+		myChecker = new ProofChecker(myTxts7);
+		//tests Repeat
+		String [] myTxts8 = {"thmSetOne.txt","repeatProof.txt"};
+		myChecker=new ProofChecker(myTxts8);
 	}
 
 
